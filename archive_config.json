@@ -8,6 +8,9 @@
     ],
     "check_access_time": true,
     "by_osx_date_added": true,
+    "log_level": "ERROR",
     "debug": false,
+    "debug_archive_threshold": 1,
+    "debug_disable_check_osx_date_added": false,
     "revert": ""
 }
