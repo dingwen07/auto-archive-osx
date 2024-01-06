@@ -71,6 +71,7 @@ if __name__ == '__main__':
         'archive_folder': ARCHIVE_FOLDER,
         'archive_threshold': ARCHIVE_THRESHOLD,
         'ignore': ['archive_config.json'],
+        'check_access_time': False,
         'by_osx_date_added': False,
         'debug': False
     }
@@ -93,6 +94,7 @@ if __name__ == '__main__':
     archive_threshold = config['archive_threshold']
     debug_mode = config['debug']
     ignore_list = config['ignore']
+    check_access_time = config['check_access_time']
     by_osx_date_added = by_osx_date_added and config['by_osx_date_added'] # so it always be false on other platforms
 
     # if in debug mode, set archive folder to Archive_Debug
@@ -141,7 +143,8 @@ if __name__ == '__main__':
         if file in ignore_list:
             continue
         file_path = os.path.join(target_dir, file)
-        file_modified_time = os.path.getmtime(file_path)
+        file_stat = os.stat(file_path)
+        file_modified_time = file_stat.st_mtime
         file_added_time = file_modified_time
         if osx_date_added:
             try:
@@ -159,8 +162,10 @@ if __name__ == '__main__':
         if osx_date_added:
             # if file added time is newer than modified time
             # use added time
-            if file_added_time > file_modified_time:
-                file_threshold_time = file_added_time
+            file_threshold_time = max(file_modified_time, file_added_time)
+        if check_access_time:
+            file_access_time = file_stat.st_atime
+            file_threshold_time = max(file_threshold_time, file_access_time)
 
         if time.time() - file_threshold_time > archive_threshold * 24 * 60 * 60:
             success = True

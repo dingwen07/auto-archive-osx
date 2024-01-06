@@ -6,6 +6,7 @@
         ".DS_Store",
         "Icon\r"
     ],
+    "check_access_time": true,
     "by_osx_date_added": true,
     "debug": false,
     "revert": ""
