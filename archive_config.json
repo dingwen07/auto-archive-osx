@@ -1,0 +1,12 @@
+{
+    "archive_folder": "Archive",
+    "archive_threshold": 30,
+    "ignore": [
+        "archive_config.json",
+        ".DS_Store",
+        "Icon\r"
+    ],
+    "by_osx_date_added": true,
+    "debug": false,
+    "revert": ""
+}
