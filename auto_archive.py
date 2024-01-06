@@ -4,6 +4,7 @@ import shutil
 import time
 import json
 import tempfile
+import subprocess
 
 
 ARCHIVE_FOLDER = 'Archive'
@@ -48,6 +49,9 @@ def revert(run_log, target_dir, archive_folder=ARCHIVE_FOLDER):
 
 
 if __name__ == '__main__':
+    # Mac OS Date Added
+    osx_date_added = True
+    by_osx_date_added = True
     # get target directory and self name
     if platform.system() == 'Darwin':
         target_dir = get_path_osx()
@@ -59,12 +63,15 @@ if __name__ == '__main__':
     else:
         target_dir = get_path()
         self_name = os.path.basename(target_dir)
+        osx_date_added = False
+        by_osx_date_added = False
 
     # get config from config file
     config = {
         'archive_folder': ARCHIVE_FOLDER,
         'archive_threshold': ARCHIVE_THRESHOLD,
         'ignore': ['archive_config.json'],
+        'by_osx_date_added': False,
         'debug': False
     }
     config_file = os.path.join(target_dir, 'archive_config.json')
@@ -79,11 +86,14 @@ if __name__ == '__main__':
     except Exception as e:
         err_log(e)
         exit()
+    
+    print('Config: {}'.format(config))
 
     archive_folder = config['archive_folder']
     archive_threshold = config['archive_threshold']
     debug_mode = config['debug']
     ignore_list = config['ignore']
+    by_osx_date_added = by_osx_date_added and config['by_osx_date_added'] # so it always be false on other platforms
 
     # if in debug mode, set archive folder to Archive_Debug
     # and archive threshold to 0 day
@@ -132,12 +142,32 @@ if __name__ == '__main__':
             continue
         file_path = os.path.join(target_dir, file)
         file_modified_time = os.path.getmtime(file_path)
-        if time.time() - file_modified_time > archive_threshold * 24 * 60 * 60:
+        file_added_time = file_modified_time
+        if osx_date_added:
+            try:
+                file_added_time_str = subprocess.check_output(['mdls', '-name', 'kMDItemDateAdded', '-raw', file_path]).decode('utf-8').strip()
+                file_added_time = time.mktime(time.strptime(file_added_time_str, '%Y-%m-%d %H:%M:%S %z'))
+            except Exception as e:
+                err_log(e)
+        # determine file time
+        if by_osx_date_added:
+            file_time = file_added_time
+        else:
+            file_time = file_modified_time
+        # determine file threshold time, which one is older
+        file_threshold_time = file_modified_time
+        if osx_date_added:
+            # if file added time is newer than modified time
+            # use added time
+            if file_added_time > file_modified_time:
+                file_threshold_time = file_added_time
+
+        if time.time() - file_threshold_time > archive_threshold * 24 * 60 * 60:
             success = True
             err = None
             try:
                 # move file to archive folder
-                file_archive_dir_relative = time.strftime('%Y-%m', time.localtime(file_modified_time))
+                file_archive_dir_relative = time.strftime('%Y-%m', time.localtime(file_time))
                 file_archive_dir = os.path.join(archive_dir, file_archive_dir_relative)
                 if not os.path.exists(file_archive_dir):
                     try:
@@ -178,7 +208,7 @@ if __name__ == '__main__':
                     os.mkdir(log_dir)
                 except Exception as e:
                     err_log(e)
-            log_file = os.path.join(log_dir, time.strftime('%Y-%m.log', time.localtime(file_modified_time)))
+            log_file = os.path.join(log_dir, time.strftime('%Y-%m.log', time.localtime(file_time)))
             try:
                 with open(log_file, 'a', encoding='utf-8') as f:
                     f.write(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime()) + ' ' + file + ' ' + errmsg + '\n')
