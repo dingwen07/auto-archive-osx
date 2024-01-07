@@ -83,19 +83,28 @@ if __name__ == '__main__':
     config = {
         'archive_folder': ARCHIVE_FOLDER,
         'archive_threshold': ARCHIVE_THRESHOLD,
-        'ignore': ['archive_config.json'],
+        'ignore': ['archive_config.json', '.archive_config.json', '.DS_Store', 'Icon\r'],
         'check_access_time': False,
         'by_osx_date_added': False,
-        'debug': False
+        'log_level': 'ERROR',
+        'debug': False,
+        'debug_archive_threshold': 1,
+        'debug_disable_check_osx_date_added': False
     }
     config_file = os.path.join(target_dir, 'archive_config.json')
+    config_file_hidden = os.path.join(target_dir, '.archive_config.json')
     try:
+        load_config = {}
         if os.path.exists(config_file):
             with open(config_file, 'r') as f:
                 load_config = json.load(f)
                 config = {**config, **load_config}
+        elif os.path.exists(config_file_hidden):
+            with open(config_file_hidden, 'r') as f:
+                load_config = json.load(f)
+                config = {**config, **load_config}
         else:
-            with open(config_file, 'w') as f:
+            with open(config_file, 'w', encoding='utf-8') as f:
                 json.dump(config, f, indent=4)
     except Exception as e:
         err_log(e)
@@ -109,21 +118,14 @@ if __name__ == '__main__':
     ignore_list = config['ignore']
     check_access_time = config['check_access_time']
     by_osx_date_added = by_osx_date_added and config['by_osx_date_added'] # so it always be false on other platforms
-    if 'log_level' in config:
-        LOG_LEVEL = config['log_level']
-    else:
-        LOG_LEVEL = 'ERROR'
+    LOG_LEVEL = config['log_level']
 
     # if in debug mode, set archive folder to Archive_Debug
     # and archive threshold to 0 day
     if debug_mode:
         archive_folder = 'Archive_Debug'
-        if 'debug_archive_threshold' in config:
-            archive_threshold = config['debug_archive_threshold']
-        else:
-            archive_threshold = 0
-        if 'debug_disable_check_osx_date_added' in config:
-            osx_date_added = not config['debug_disable_check_osx_date_added']
+        archive_threshold = config['debug_archive_threshold']
+        osx_date_added = not config['debug_disable_check_osx_date_added']
         # also, save target_dir and self_name to file
         # and config
         err_log('target_dir: {}'.format(target_dir), log_type='Debug')

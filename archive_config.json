@@ -3,6 +3,7 @@
     "archive_threshold": 30,
     "ignore": [
         "archive_config.json",
+        ".archive_config.json",
         ".DS_Store",
         "Icon\r"
     ],
