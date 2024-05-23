@@ -5,15 +5,19 @@ Usage:
     python setup.py py2app
 """
 
+from datetime import datetime
+
 from setuptools import setup
 
 APP = ['auto_archive.py']
 DATA_FILES = []
+VERSION = '0.0.2'
+
 PLIST = {
-    'CFBundleShortVersionString': '0.0.1',
-    'CFBundleGetInfoString': 'AutoArchive 0.0.1',
+    'CFBundleShortVersionString': VERSION,
+    'CFBundleGetInfoString': f'AutoArchive {VERSION}',
     'CFBundleIdentifier': 'net.extrawdw.AutoArchive',
-    'NSHumanReadableCopyright': 'Copyright © 2023 Dingwen Wang. All rights reserved.',
+    'NSHumanReadableCopyright': f'Copyright © {datetime.now().year} Dingwen Wang. All rights reserved.',
 }
 OPTIONS = {
     'iconfile': '/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AllMyFiles.icns',

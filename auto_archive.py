@@ -86,10 +86,10 @@ if __name__ == '__main__':
         'ignore': ['archive_config.json', '.archive_config.json', '.DS_Store', 'Icon\r'],
         'check_access_time': False,
         'by_osx_date_added': False,
+        'disable_check_osx_date_added': False,
         'log_level': 'ERROR',
         'debug': False,
         'debug_archive_threshold': 1,
-        'debug_disable_check_osx_date_added': False
     }
     config_file = os.path.join(target_dir, 'archive_config.json')
     config_file_hidden = os.path.join(target_dir, '.archive_config.json')
@@ -118,6 +118,7 @@ if __name__ == '__main__':
     ignore_list = config['ignore']
     check_access_time = config['check_access_time']
     by_osx_date_added = by_osx_date_added and config['by_osx_date_added'] # so it always be false on other platforms
+    osx_date_added = not config['disable_check_osx_date_added']
     LOG_LEVEL = config['log_level']
 
     # if in debug mode, set archive folder to Archive_Debug
@@ -125,7 +126,6 @@ if __name__ == '__main__':
     if debug_mode:
         archive_folder = 'Archive_Debug'
         archive_threshold = config['debug_archive_threshold']
-        osx_date_added = not config['debug_disable_check_osx_date_added']
         # also, save target_dir and self_name to file
         # and config
         err_log('target_dir: {}'.format(target_dir), log_type='Debug')
