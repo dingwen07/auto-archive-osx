@@ -8,7 +8,7 @@ find_app() {
     $path_launchservices -dump | grep -o "/.*${name_app}.app" | grep -v -E "Caches|TimeMachine|Temporary|/Volumes/${name_app}" | uniq
 }
 
-trash() { osascript -e "tell application \"Finder\" to delete POSIX file \"$(grealpath "$1")\"" > /dev/null; }
+trash() { osascript -e "tell application \"Finder\" to delete POSIX file \"$(realpath "$1")\"" > /dev/null; }
 
 # constants
 APP_NAME="AutoArchive"
@@ -21,7 +21,7 @@ echo "$APP_NAME Updater"
 source=${1:-"./dist/$APP_DIRNAME"}
 
 # Get the absolute path of ./dist/AutoArchive.app
-source=$(cd "$(dirname "$source")"; pwd -P)/$(basename "$source")
+source=$(realpath "$source")
 source_bundle_id=$(defaults read "$source/Contents/Info.plist" CFBundleIdentifier)
 source_version=$(defaults read "$source/Contents/Info.plist" CFBundleShortVersionString)
 
