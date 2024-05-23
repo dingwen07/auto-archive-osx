@@ -12,6 +12,9 @@ TEAM_ID=$(op read "op://Personal/z4sp6gvcgzeejgvf6mufvqwrme/Developer/Team ID")
 APP_NAME="AutoArchive"
 APP_DIRNAME="$APP_NAME.app"
 
+# Hello
+echo "$APP_NAME Release Utility"
+
 source=${1:-"./dist/$APP_DIRNAME"}
 source=$(realpath "$source")
 source_parent=$(dirname "$source")
@@ -47,4 +50,3 @@ spctl -vvv --assess --type exec $source
 
 trash $source_parent/AutoArchive.zip
 /usr/bin/ditto -c -k --keepParent $source $source_parent/AutoArchive.zip
-cp -R ./dist/AutoArchive.app ./test/AutoArchive.app

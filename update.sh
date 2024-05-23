@@ -15,7 +15,7 @@ APP_NAME="AutoArchive"
 APP_DIRNAME="$APP_NAME.app"
 
 # Hello
-echo "$APP_NAME Updater"
+echo "$APP_NAME Update Utility"
 
 # Try read source from argument, if not provided, use "./dist/AutoArchive.app"
 source=${1:-"./dist/$APP_DIRNAME"}

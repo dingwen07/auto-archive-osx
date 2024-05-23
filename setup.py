@@ -11,7 +11,7 @@ from setuptools import setup
 
 APP = ['auto_archive.py']
 DATA_FILES = []
-VERSION = '0.0.2'
+VERSION = '0.0.2a'
 
 PLIST = {
     'CFBundleShortVersionString': VERSION,
