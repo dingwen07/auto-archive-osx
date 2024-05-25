@@ -4,14 +4,15 @@
     "ignore": [
         "archive_config.json",
         ".archive_config.json",
+        ".localized",
         ".DS_Store",
         "Icon\r"
     ],
     "check_access_time": true,
     "by_osx_date_added": true,
+    "disable_check_osx_date_added": false,
     "log_level": "ERROR",
     "debug": false,
     "debug_archive_threshold": 1,
-    "debug_disable_check_osx_date_added": false,
     "revert": ""
 }

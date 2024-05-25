@@ -83,7 +83,7 @@ if __name__ == '__main__':
     config = {
         'archive_folder': ARCHIVE_FOLDER,
         'archive_threshold': ARCHIVE_THRESHOLD,
-        'ignore': ['archive_config.json', '.archive_config.json', '.DS_Store', 'Icon\r'],
+        'ignore': ['archive_config.json', '.archive_config.json', '.localized', '.DS_Store', 'Icon\r'],
         'check_access_time': False,
         'by_osx_date_added': False,
         'disable_check_osx_date_added': False,
