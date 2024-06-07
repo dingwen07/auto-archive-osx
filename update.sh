@@ -43,12 +43,12 @@ IFS=$'\n'
 # Loop through all installations of AutoArchive.app
 for target in $apps_path; do
     # Ignore certain paths
-    if [[ "$target" == *"/Volumes/"* ]]; then
-        echo "Ignoring $target because it is on /Volumes/"
+    if [[ "$target" == *"/Volumes/.timemachine/"* ]]; then
+        echo "Ignoring $target because it is in /Volumes/.timemachine/"
         continue
     fi
     if [[ "$target" == *"/.Trash/"* ]]; then
-        echo "Ignoring $target because it is in /.Trash/"
+        echo "Ignoring $target because it is in Trash"
         continue
     fi
     if [[ "$target" == "$source" ]]; then

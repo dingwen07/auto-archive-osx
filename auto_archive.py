@@ -10,7 +10,7 @@ import subprocess
 ARCHIVE_FOLDER = 'Archive'
 ARCHIVE_THRESHOLD = 30 # days
 ERROR_LOG_FILE = os.path.join(tempfile.gettempdir(), 'auto_archive.log')
-LOG_LEVEL = 'INFO' # INFO, ERROR
+LOG_LEVEL = 'INFO' # INIT, INFO, ERROR
 
 def get_path():
     return os.path.dirname(__file__)
@@ -27,13 +27,13 @@ def err_log(msg, log_type='ERROR'):
     if log_type == 'INFO' and LOG_LEVEL == 'ERROR':
         return
     with open(ERROR_LOG_FILE, 'a', encoding='utf-8') as f:
-        if msg == '' and log_type == 'INFO':
+        if msg == '' and (log_type == 'INFO' or log_type == 'INIT'):
             f.write('\n')
         else:
             f.write(f"{time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())} {log_type}: {msg}\n")
 
 def revert(run_log, target_dir, archive_folder=ARCHIVE_FOLDER):
-    err_log(f'Reverting {run_log}', log_type='INFO')
+    err_log(f'Reverting {run_log}', log_type='INIT')
     try:
         with open(run_log, 'r') as f:
             log = json.load(f)
@@ -55,20 +55,20 @@ def revert(run_log, target_dir, archive_folder=ARCHIVE_FOLDER):
             err_log(e)
             continue
     
-    err_log('Revert done', log_type='INFO')
+    err_log('Revert done', log_type='INIT')
 
 
 if __name__ == '__main__':
-    err_log('Process started', log_type='INFO')
+    err_log('Process started', log_type='INIT')
     # Mac OS Date Added
     osx_date_added = True
     by_osx_date_added = True
     # get target directory and self name
     if platform.system() == 'Darwin':
-        err_log('Running on OSX', log_type='INFO')
         target_dir = get_path_osx()
+        err_log(f'Running on OS X: {target_dir}', log_type='INIT')
         if target_dir.endswith('.app'):
-            err_log('Running in OSX app bundle', log_type='INFO')
+            err_log('Running in OS X App Bundle', log_type='INIT')
             self_name = os.path.basename(target_dir)
             target_dir = os.path.dirname(target_dir)
         else:
@@ -78,6 +78,8 @@ if __name__ == '__main__':
         self_name = os.path.basename(target_dir)
         osx_date_added = False
         by_osx_date_added = False
+    
+    err_log(f'Target directory: {target_dir}', log_type='INIT')
 
     # get config from config file
     config = {
@@ -87,7 +89,7 @@ if __name__ == '__main__':
         'check_access_time': False,
         'by_osx_date_added': False,
         'disable_check_osx_date_added': False,
-        'log_level': 'ERROR',
+        'log_level': 'INFO',
         'debug': False,
         'debug_archive_threshold': 1,
     }
@@ -96,21 +98,24 @@ if __name__ == '__main__':
     try:
         load_config = {}
         if os.path.exists(config_file):
+            err_log(f'Loading config from {config_file}', log_type='INIT')
             with open(config_file, 'r') as f:
                 load_config = json.load(f)
                 config = {**config, **load_config}
         elif os.path.exists(config_file_hidden):
+            err_log(f'Loading config from {config_file_hidden}', log_type='INIT')
             with open(config_file_hidden, 'r') as f:
                 load_config = json.load(f)
                 config = {**config, **load_config}
         else:
+            err_log(f'Config file not found, creating {config_file}', log_type='INIT')
             with open(config_file, 'w', encoding='utf-8') as f:
                 json.dump(config, f, indent=4)
     except Exception as e:
         err_log(e)
         exit()
     
-    err_log(f'Config: {config}', log_type='INFO')
+    err_log(f'Config: {config}', log_type='INIT')
 
     archive_folder = config['archive_folder']
     archive_threshold = config['archive_threshold']
@@ -135,13 +140,13 @@ if __name__ == '__main__':
     # check if revert mode
     if 'revert' in config:
         if os.path.exists(config['revert']):
-            err_log('Revert mode', log_type='INFO')
+            err_log('Revert mode', log_type='INIT')
             revert(config['revert'], target_dir, archive_folder)
             # move the json to reverted.json
             file_name, file_ext = os.path.splitext(config['revert'])
             shutil.move(config['revert'], file_name + '_reverted' + file_ext)
-            err_log('Process ended', log_type='INFO')
-            err_log('', log_type='INFO')
+            err_log('Process ended', log_type='INIT')
+            err_log('', log_type='INIT')
             exit()
 
     # check if archive folder exists
@@ -151,8 +156,8 @@ if __name__ == '__main__':
             os.mkdir(archive_dir)
         except Exception as e:
             err_log(e)
-            err_log('Process ended', log_type='INFO')
-            err_log('', log_type='INFO')
+            err_log('Process ended', log_type='INIT')
+            err_log('', log_type='INIT')
             exit()
 
 
@@ -277,5 +282,5 @@ if __name__ == '__main__':
     except Exception as e: 
         err_log(e)
     
-    err_log('Process ended', log_type='INFO')
-    err_log('', log_type='INFO')
+    err_log('Process ended', log_type='INIT')
+    err_log('', log_type='INIT')
