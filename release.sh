@@ -29,7 +29,11 @@ read -p "Press Enter to continue to codesign"
 
 # codesign
 CODESIGN_VARS="--deep --force --verify --verbose --timestamp --options runtime"
+echo Codesigning libraries...
 find $source/ -name "*.so" -exec codesign $CODESIGN_VARS -s "$TEAM_ID" {} \;
+find $source/ -name "*.dylib" -exec codesign $CODESIGN_VARS -s "$TEAM_ID" {} \;
+echo Codesigning executables...
+find $source/ -type f -perm +111 -exec codesign $CODESIGN_VARS -s "$TEAM_ID" {} \;
 codesign $CODESIGN_VARS -s "$TEAM_ID" $source
 
 echo .
@@ -50,3 +54,5 @@ spctl -vvv --assess --type exec $source
 
 trash $source_parent/AutoArchive.zip
 /usr/bin/ditto -c -k --keepParent $source $source_parent/AutoArchive.zip
+mkdir -p $source_parent/AutoArchive
+cp -R $source $source_parent/AutoArchive/AutoArchive.app

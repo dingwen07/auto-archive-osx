@@ -26,4 +26,10 @@ fi
 source ./venv/bin/activate
 
 python3 setup.py py2app
+
+deactivate
+
+echo "Copying artifact to ./test"
 cp -R ./dist/AutoArchive.app ./test/AutoArchive.app
+
+echo "Build Utility complete."

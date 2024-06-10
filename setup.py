@@ -11,17 +11,34 @@ from setuptools import setup
 
 APP = ['auto_archive.py']
 DATA_FILES = []
-VERSION = '0.0.3'
+VERSION = '0.0.4'
 
 PLIST = {
     'CFBundleShortVersionString': VERSION,
     'CFBundleGetInfoString': f'AutoArchive {VERSION}',
     'CFBundleIdentifier': 'net.extrawdw.AutoArchive',
     'NSHumanReadableCopyright': f'Copyright © {datetime.now().year} Dingwen Wang. All rights reserved.',
+    # support JSON file as input
+    'CFBundleDocumentTypes': [
+        {
+            'CFBundleTypeExtensions': ['json'],
+            'CFBundleTypeName': 'Run Log JSON',
+            'CFBundleTypeRole': 'Editor',
+            'LSItemContentTypes': ['public.json'],
+        },
+        {
+            'CFBundleTypeExtensions': [],
+            'CFBundleTypeName': 'Folder',
+            'CFBundleTypeRole': 'Editor',
+            'LSItemContentTypes': ['public.folder'],
+        }
+    ],
 }
+
 OPTIONS = {
     'iconfile': '/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AllMyFiles.icns',
     'plist': PLIST,
+    'arch': 'universal2',
 }
 
 setup(

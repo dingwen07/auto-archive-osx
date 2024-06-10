@@ -11,13 +11,14 @@ PYTHON=/usr/bin/python3
 export PATH=/usr/bin:$PATH
 
 # Hello
-echo "AutoArchive Universal Build Utility"
+echo "AutoArchive Universal 2 Binary Build Utility"
 
 if [ "$(arch)" == "arm64" ]; then
   echo "Running on arm64, switching to x86_64"
   arch -x86_64 $0
   exit
 fi
+
 echo "Running on $(arch)"
 echo "Build Directory: $BUILD_DIR"
 
@@ -53,9 +54,11 @@ echo "Installing dependencies..."
 source ./venv/bin/activate
 pip install -r requirements.txt
 deactivate
+echo "Patching PyQt6..."
+./pyqt6-universal-patch.sh
 
 echo "Running Build Utility..."
 ./build.sh
 
-echo "Build Utility complete."
+echo "Universal 2 Binary Build Utility complete."
 echo "Run 'cd ./build/universal' for next steps."
