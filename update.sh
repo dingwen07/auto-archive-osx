@@ -47,7 +47,7 @@ for target in $apps_path; do
         echo "Ignoring $target because it is in /Volumes/.timemachine/"
         continue
     fi
-    if [[ "$target" == *"/.Trash/"* ]]; then
+    if [[ "$target" == *"/.Trash/"* || "$target" == *"/.Trashes/"* ]]; then
         echo "Ignoring $target because it is in Trash"
         continue
     fi
